@@ -1,4 +1,4 @@
-﻿﻿# RunAudit.ps1 - High-risk API audit script (P2 deliverable)
+# RunAudit.ps1 - High-risk API audit script (P2 deliverable)
 # Exit code: 0 = hard rules pass; non-zero = violation (CI gateable)
 
 $ErrorActionPreference = "Stop"
