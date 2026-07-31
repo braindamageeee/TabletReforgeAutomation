@@ -27,7 +27,7 @@ jobs:
       - name: Run Unit Tests
         shell: pwsh
         run: |
-          bin\Release\TabletReforgeTests.exe | Tee-Object test-output.log
+          .\bin\Release\TabletReforgeTests.exe | Tee-Object test-output.log
           if (Select-String -Path test-output.log -Pattern "部分测试失败" -Quiet) {
             Write-Host "::error::单元测试存在失败用例，详见日志"
             exit 1
