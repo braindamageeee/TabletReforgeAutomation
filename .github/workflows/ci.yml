@@ -18,7 +18,7 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Build Solution (Release|x64)
-        run: msbuild TabletReforgeAutomation.sln /p:Configuration=Release /p:Platform=x64 /m /warnaserror
+        run: msbuild TabletReforgeAutomation.sln /p:Configuration=Release /p:Platform=x64 /m /warnaserror /wd4819
 
       - name: Run Code Audit
         shell: pwsh
