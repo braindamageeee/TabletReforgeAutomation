@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Solution (Release|x64)
+        run: msbuild TabletReforgeAutomation.sln /p:Configuration=Release /p:Platform=x64 /m /warnaserror
+
+      - name: Run Code Audit
+        shell: pwsh
+        run: test/RunAudit.ps1
+
+      - name: Run Unit Tests
+        shell: pwsh
+        run: |
+          bin\Release\TabletReforgeTests.exe | Tee-Object test-output.log
+          if (Select-String -Path test-output.log -Pattern "部分测试失败" -Quiet) {
+            Write-Host "::error::单元测试存在失败用例，详见日志"
+            exit 1
+          }
+          Write-Host "所有单元测试通过"
+
+      - name: Upload Plugin DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: TabletReforgeAutomation-dll
+          path: bin/Release/TabletReforgeAutomation.dll
+          if-no-files-found: error
+
+      - name: Upload Test Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: logs/
+          if-no-files-found: warn
